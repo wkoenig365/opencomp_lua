@@ -6,11 +6,14 @@ local inv_cont = component.inventory_controller
 
 local i = true
 
+io.write("Enter wait time in seconds: ")
+time = io.read("*n")
+
 while i do
     robot.select(1)
     robot.use(sides.front)
     robot.select(2)
-    os.sleep(24)
+    os.sleep(tonumber(time))
     robot.use(sides.front)
     robot.select(1)
     robot.transferTo(6, 1)
