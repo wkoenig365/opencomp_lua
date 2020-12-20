@@ -1,7 +1,7 @@
 local os = require("os")
 local component = require("component")
 local sides = require("sides")
-local robot = require("robot")
+local robot = component.robot
 local inv_cont = component.inventory_controller
 
 local b = true
@@ -11,7 +11,7 @@ time = io.read("*n")
 
 while b do
     for i=1,27 do
-        for ii=1,65 do
+        for ii=1,30 do
             robot.select(1)
             robot.use(sides.front)
             robot.select(2)
@@ -29,9 +29,15 @@ while b do
         item_info = inv_cont.getStackInSlot(sides.front, i)
         item_info_next = inv_cont.getStackInSlot(sides.front, i+1)
         if item_info.name == "minecraft:stone" then
-            robot.select(1)
-            inv_cont.suckFromSlot(sides.front, i, item_info.maxSize)
-            robot.turnAround()
+            if item_info.size == item_info.maxSize then
+                robot.select(1)
+                inv_cont.suckFromSlot(sides.front, i, item_info.maxSize)
+                robot.turnAround()
+            elseif item_info_next.name == "minecraft:stone" then
+                robot.select(1)
+                inv_cont.suckFromSlot(sides.front, i+1, item_info.maxSize)
+                robot.turnAround()
+            end
         else
             print("fuck")
         end
