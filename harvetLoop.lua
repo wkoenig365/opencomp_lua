@@ -5,22 +5,23 @@ if #args < 3 then
   error("Usage: harvestInferium.lua <width> <depth> <sleepTime>")
 end
 
-local width  = tonumber(args[1])
-local depth  = tonumber(args[2])
-local pause  = tonumber(args[3])
-local matureAge = 5  -- change if your inferium crop uses a different age
+local width     = tonumber(args[1])
+local depth     = tonumber(args[2])
+local pause     = tonumber(args[3])
+local matureAge = 7  -- change if your inferium crop uses a different age
 
--- Refuel automatically if needed
-if turtle.getFuelLevel() == 0 then
-  for slot = 1, 16 do
-    turtle.select(slot)
-    if turtle.refuel(0) then
+-- Refuel only using coal or charcoal
+for slot = 1, 16 do
+  turtle.select(slot)
+  local item = turtle.getItemDetail()
+  if item and (item.name == "minecraft:coal" or item.name == "minecraft:charcoal") then
+    if turtle.getFuelLevel() == 0 then
       turtle.refuel()
-      break
     end
+    break
   end
-  turtle.select(1)
 end
+turtle.select(1)
 
 local function inspectAndHarvest()
   local ok, data = turtle.inspectDown()
@@ -29,6 +30,7 @@ local function inspectAndHarvest()
     print("Crop age:", age)
     if age >= matureAge then
       turtle.digDown()
+      turtle.suckDown()
     end
   end
 end
@@ -81,7 +83,13 @@ end
 local function depositAll()
   for slot = 1, 16 do
     turtle.select(slot)
-    turtle.dropDown()
+    local detail = turtle.getItemDetail()
+    if detail then
+      local name = detail.name
+      if name ~= "minecraft:coal" and name ~= "minecraft:charcoal" then
+        turtle.dropDown()
+      end
+    end
   end
   turtle.select(1)
 end
