@@ -25,11 +25,16 @@ turtle.select(1)
 
 local function inspectAndHarvest()
   local ok, data = turtle.inspectDown()
+  if ok and data.name ~= "minecraft:chest" then
+    turtle.suckDown()
+  end
   if ok and data.state and data.state.age then
     local age = data.state.age
     print("Crop age:", age)
     if age >= matureAge then
       turtle.digDown()
+      turtle.suckDown()
+      os.sleep(0.1)
       turtle.suckDown()
     end
   end
