@@ -11,17 +11,19 @@ local pause     = tonumber(args[3])
 local matureAge = 7  -- change if your inferium crop uses a different age
 
 -- Refuel only using coal or charcoal
-for slot = 1, 16 do
-  turtle.select(slot)
-  local item = turtle.getItemDetail()
-  if item and (item.name == "minecraft:coal" or item.name == "minecraft:charcoal") then
-    if turtle.getFuelLevel() == 0 then
-      turtle.refuel()
+local function refuelIfNeeded()
+  if turtle.getFuelLevel() == 0 then
+    for slot = 1, 16 do
+      turtle.select(slot)
+      local item = turtle.getItemDetail()
+      if item and (item.name == "minecraft:coal" or item.name == "minecraft:charcoal") then
+        turtle.refuel()
+        break
+      end
     end
-    break
+    turtle.select(1)
   end
 end
-turtle.select(1)
 
 local function inspectAndHarvest()
   local ok, data = turtle.inspectDown()
@@ -101,6 +103,8 @@ end
 
 -- Main loop
 while true do
+  refuelIfNeeded()
+  
   for row = 1, depth do
     harvestRow()
     if row < depth then
